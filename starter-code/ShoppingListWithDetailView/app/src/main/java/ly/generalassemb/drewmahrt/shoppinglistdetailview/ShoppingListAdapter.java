@@ -15,14 +15,22 @@ import java.util.List;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingItemViewHolder> {
     private List<ShoppingItem> mShoppingItems;
+    private OnGrocerySelectedListener mOnGrocerySelectedListener;
 
-    public ShoppingListAdapter(List<ShoppingItem> shoppingItems) {
+    public interface OnGrocerySelectedListener {
+        void onGrocerySelected(int groceryId);
+    }
+
+    public ShoppingListAdapter(List<ShoppingItem> shoppingItems,
+                               OnGrocerySelectedListener onGrocerySelectedListener) {
         mShoppingItems = shoppingItems;
+        mOnGrocerySelectedListener = onGrocerySelectedListener;
     }
 
     @Override
     public ShoppingItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ShoppingItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1,parent,false));
+        return new ShoppingItemViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(android.R.layout.simple_list_item_1,parent,false));
     }
 
     @Override
@@ -36,17 +44,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingItemViewHo
         holder.mNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get a reference to the MainActivity as a Context
-                Context mainActivity = holder.mNameTextView.getContext();
-
-                // Create the intent
-                Intent intent = new Intent(mainActivity, DetailActivity.class);
-
-                // Add the ID as an extra
-                intent.putExtra(DetailActivity.ITEM_ID_KEY, currentItem.getId());
-
-                // Start the detail activity
-                mainActivity.startActivity(intent);
+                mOnGrocerySelectedListener.onGrocerySelected(currentItem.getId());
             }
         });
     }
